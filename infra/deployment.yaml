@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readings
+  namespace: gitops44
+  labels:
+    app: readings
+    org.bstu.course: RSIOT
+    org.bstu.student.id: "230233"
+    org.bstu.variant: "44"
+    org.bstu.slug: 230233-v44
+  annotations:
+    org.bstu.owner: Belaruso4ka
+    org.bstu.description: "LR07 RSIOT: SmartHome readings service delivered by Argo CD, variant 44"
+spec:
+  replicas: 3
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 120
+  selector:
+    matchLabels:
+      app: readings
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: readings
+        org.bstu.course: RSIOT
+        org.bstu.student.id: "230233"
+        org.bstu.variant: "44"
+        org.bstu.slug: 230233-v44
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: readings
+          image: ghcr.io/belaruso4ka/readings:bootstrap
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8124
+          env:
+            - name: PORT
+              value: "8124"
+            - name: STU_ID
+              value: "230233"
+            - name: STU_VARIANT
+              value: "44"
+            - name: ALERT_THRESHOLD_C
+              valueFrom:
+                configMapKeyRef:
+                  name: readings-config
+                  key: ALERT_THRESHOLD_C
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
