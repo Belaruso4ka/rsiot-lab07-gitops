@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 
 # Строка, которую меняем в части 4 (путь коммита): после push новая версия
 # должна сама доехать до кластера.
-GREETING = "readings v1"
+GREETING = "readings v2"
 
 STU_ID = os.environ["STU_ID"]
 STU_VARIANT = os.environ["STU_VARIANT"]
