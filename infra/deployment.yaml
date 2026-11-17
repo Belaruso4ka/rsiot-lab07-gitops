@@ -38,7 +38,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: readings
-          image: ghcr.io/belaruso4ka/readings:broken-tag
+          image: ghcr.io/belaruso4ka/readings:2386c46c707aa6dee9a5ddb3f52d9d3111d8bb20
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
